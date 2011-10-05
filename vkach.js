@@ -15,96 +15,109 @@
 })
 
 (function() {
-	// class for detecting new audio HTML elements
-	var Audio = function(searchAudioFunction) {
-		this.getAll = searchAudioFunction;
-		this.removingCount = 0;
+	var Audio = function() {
+		this.clickListeners = [];
+
+		// override for debug
+		this.getFromPoint = function() {
+			var start = $.now();
+			var res = Audio.prototype.getFromPoint.apply(this, arguments);
+			$('#stl_text').css('opacity', '1')
+			              .html('Speed ' + ($.now() - start) + ' ms');
+			return res;
+		}
 	}
 	Audio.prototype = {
-		update: function(newAudioCallback) {
-			var t = this;
-			var auAll = t.getAll();
-
-			// if some elements are being removed now
-			if (t.removingCount) {
-				return;
-			}
-
-			// if audio list was refreshed
-			if (t.first !== auAll.get(0)) {
-				//alert("refresh " + auAll.size());
-				t.first = auAll.get(0);
-				t.index = 0;
-			}
-
-			// try to get new audios
-			var auNew = auAll.filter(function(i){return(i>=t.index)});
-			if (auNew.size()) {
-
-				// on "remove audio" event
-				auNew.children('.remove_wrap').one('click', function() {
-					++t.removingCount;
-					var removing = $(this).parent();
-					var parent = removing.parent();
-
-					// wait while the element is being removed
-					var wait = function() {
-						if (parent.find(removing).size()) {
-							return setTimeout(wait, 1);
-						}
-
-						// fix fields after removing
-						if (removing.get(0) === t.first) {
-							t.first = parent.children().get(0);
-						}
-						--t.index;
-						--t.removingCount;
+		applyTo: function(selector) {
+			var self = this;
+			$(selector).click(function(e) {
+				var elem = self.getFromPoint(this, e.pageX, e.pageY);
+				if (elem !== null) {
+					for (var i in self.clickListeners) {
+						self.clickListeners[i].apply(elem, arguments);
 					}
-					wait();
-				});
-
-				// add new audios
-				t.index += auNew.size();
-				newAudioCallback(auNew);
-			}
+				}
+			});
+			return this;
 		},
-	}
 
-	var audioDetectors = [
-		new Audio(function() {
-			// get element from all except the audio edit page
-			return $('#audio_create_album').size() ? $() :
-				$('#audios_list #initial_list').children();
-		}),
-		new Audio(function() {
-			// get element from all except the audio edit page
-			return $('#audio_create_album').size() ? $() :
-				$('#audios_list #search_list').children();
-		})
-	];
+		click: function(listener) {
+			this.clickListeners.push(listener);
+			return this;
+		},
 
-	var newAudiosProcessor = function(audios) {
-		// test for duplicates
-		var au = audios.filter('[metka="true"]');
-		if (au.size()) {
-			alert('dup ' + au.size());
+		getFromPoint: function(selector, x, y) {
+			// get mouse cursor position relative to the element,
+			// -2 - left, -1 - above, 0 - inside, 1 - below, 2 - right.
+			var getRelPos = function(elem) {
+				// skip preloaded elements
+				if (!$(elem).filter(':visible').size()) {
+					return -1;
+				}
+
+				var offset = $(elem).offset();
+				if (y < offset.top)
+					return -1;
+				else if (y > offset.top + $(elem).outerHeight())
+					return 1;
+				else if (x < offset.left)
+					return -2;
+				else if (x > offset.left + $(elem).outerWidth())
+					return 2;
+				return 0;
+			}
+
+			// target elements
+			elements = $(selector).find('.audio');
+
+			// find element by position
+			var b = 0, e = elements.size();
+			while (b != e) {
+				var i = parseInt((b + e) / 2);
+				var res = getRelPos(elements.get(i));
+				if (res > 0) {
+					b = i + 1;
+				}
+				else if (res < 0) {
+					e = i;
+				}
+				else {
+					return elements.get(i);
+				}
+			}
+			return null;
 		}
-		audios.attr('metka', 'true');
-
-		audios.hover(function() {
-			$(this).find('.duration').css('color', '#cc0000');
-		}, function() {
-			$(this).find('.duration').css('color', '');
-		});
 	};
 
-	setInterval(function() {
-		var start = new Date();
-		for (i in audioDetectors) {
-			audioDetectors[i].update(newAudiosProcessor);
+	var audio = (new Audio()).click(function(e) {
+		// ignore clicks on elements except '.duration' element
+		if ((function() {
+			var area = $(this).find('.duration');
+			if (!area.size()) {
+				return true;
+			}
+			var offset = area.offset();
+			if (e.pageY < offset.top ||
+				e.pageY > offset.top + area.outerHeight() ||
+				e.pageX < offset.left ||
+				e.pageX > offset.left + area.outerWidth()) {
+				return true;
+			}
+			return false;
+		}).apply(this, arguments)) {
+			return;
 		}
-		var end = new Date();
-		$('#stl_text').css('opacity', '1').html('Speed ' + (end.getTime()-start.getTime()) + ' ms');
-	}, 200);
+
+		alert(this.id);
+	});
+
+	var setUp = function() {
+		var container = $('#page_body');
+		if (!container.size()) {
+			return setTimeout(setUp, 1);
+		}
+		audio.applyTo(container);
+	}
+	setUp();
 });
 
