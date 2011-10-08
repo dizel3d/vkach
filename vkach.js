@@ -19,39 +19,17 @@
 	in which areas audio elements are searched. */
 	var Audio = function() {
 		var self = this;
-		var searchAreas = arguments;
+		this.searchAreas = arguments;
 		this.clickListeners = [];
 
-		/* Aggregate function for search of audio element
-		into search areas by mouse cursor position. */
-		var getFromPoint = function(x, y) {
-			for (var i in searchAreas) {
-				var elem = self.getFromPoint(searchAreas[i], x, y);
-				if (elem !== null) {
-					return elem;
-				}
-			}
-			return null;
-		}
-
 		$(document).click(function(e) {
-			var elem = getFromPoint(e.pageX, e.pageY);
+			var elem = self.getFromPoint(e.pageX, e.pageY);
 			if (elem !== null) {
 				for (var i in self.clickListeners) {
 					self.clickListeners[i].apply(elem, arguments);
 				}
 			}
 		});
-
-		// override for debug
-		var __getFromPoint = getFromPoint;
-		getFromPoint = function() {
-			var start = $.now();
-			var res = __getFromPoint.apply(this, arguments);
-			$('#stl_text').css('opacity', '1')
-			              .html('Speed ' + ($.now() - start) + ' ms');
-			return res;
-		}
 	}
 	Audio.prototype = {
 		click: function(listener) {
@@ -59,7 +37,44 @@
 			return this;
 		},
 
-		getFromPoint: function(selector, x, y) {
+		debug: function(on) {
+			if (!on) {
+				delete this.getFromPoint;
+				return this;
+			}
+
+			var count = 0;
+			var sumTime = 0;
+			this.getFromPoint = function() {
+				if (arguments.length > 2) {
+					return Audio.prototype.getFromPoint.apply(this, arguments);
+				}
+				var start = $.now();
+				var res = Audio.prototype.getFromPoint.apply(this, arguments);
+				sumTime += $.now() - start;
+				$('#stl_text').css('opacity', '1')
+					          .html('Avg search time: ' + Math.round(sumTime / ++count) + 'ms (' + count + ')');
+				return res;
+			}
+
+			return this;
+		},
+
+		getFromPoint: function(x, y, selector) {
+			if (selector === undefined) {
+				/* Call aggregate function for search of audio element
+				into search areas by mouse cursor position. */
+				return (function() {
+					for (var i in this.searchAreas) {
+						var elem = this.getFromPoint(x, y, this.searchAreas[i]);
+						if (elem !== null) {
+							return elem;
+						}
+					}
+					return null;
+				}).apply(this, arguments);
+			}
+
 			// get mouse cursor position relative to the element,
 			// -2 - left, -1 - above, 0 - inside, 1 - below, 2 - right.
 			var getRelPos = function(elem) {
@@ -127,5 +142,7 @@
 
 		alert(this.id);
 	});
+
+	audio.debug(true);
 });
 
