@@ -15,8 +15,29 @@
 })
 
 (function() {
-	var Audio = function() {
+	var Audio = function(/*selectors in which areas audio elements are searched*/) {
+		var self = this;
+		var searchAreas = arguments;
 		this.clickListeners = [];
+
+		$(document).click(function(e) {
+			// find audio element into search areas by mouse cursor position
+			var elem = (function() {
+				for (var i in searchAreas) {
+					var elem = self.getFromPoint(searchAreas[i], e.pageX, e.pageY);
+					if (elem !== null) {
+						return elem;
+					}
+				}
+			})();
+
+			// if it was found
+			if (elem) {
+				for (var i in self.clickListeners) {
+					self.clickListeners[i].apply(elem, arguments);
+				}
+			}
+		});
 
 		// override for debug
 		this.getFromPoint = function() {
@@ -28,19 +49,6 @@
 		}
 	}
 	Audio.prototype = {
-		applyTo: function(selector) {
-			var self = this;
-			$(selector).click(function(e) {
-				var elem = self.getFromPoint(this, e.pageX, e.pageY);
-				if (elem !== null) {
-					for (var i in self.clickListeners) {
-						self.clickListeners[i].apply(elem, arguments);
-					}
-				}
-			});
-			return this;
-		},
-
 		click: function(listener) {
 			this.clickListeners.push(listener);
 			return this;
@@ -89,7 +97,11 @@
 		}
 	};
 
-	var audio = (new Audio()).click(function(e) {
+	var audio = (new Audio(
+		'#profile_audios',
+		'#page_wall_posts',
+		'#page_body'
+	)).click(function(e) {
 		// ignore clicks on elements except '.duration' element
 		if ((function() {
 			var area = $(this).find('.duration');
@@ -110,14 +122,5 @@
 
 		alert(this.id);
 	});
-
-	var setUp = function() {
-		var container = $('#page_body');
-		if (!container.size()) {
-			return setTimeout(setUp, 1);
-		}
-		audio.applyTo(container);
-	}
-	setUp();
 });
 
