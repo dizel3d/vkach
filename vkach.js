@@ -22,19 +22,21 @@
 		var searchAreas = arguments;
 		this.clickListeners = [];
 
-		$(document).click(function(e) {
-			// find audio element into search areas by mouse cursor position
-			var elem = (function() {
-				for (var i in searchAreas) {
-					var elem = self.getFromPoint(searchAreas[i], e.pageX, e.pageY);
-					if (elem !== null) {
-						return elem;
-					}
+		/* Aggregate function for search of audio element
+		into search areas by mouse cursor position. */
+		var getFromPoint = function(x, y) {
+			for (var i in searchAreas) {
+				var elem = self.getFromPoint(searchAreas[i], x, y);
+				if (elem !== null) {
+					return elem;
 				}
-			})();
+			}
+			return null;
+		}
 
-			// if it was found
-			if (elem) {
+		$(document).click(function(e) {
+			var elem = getFromPoint(e.pageX, e.pageY);
+			if (elem !== null) {
 				for (var i in self.clickListeners) {
 					self.clickListeners[i].apply(elem, arguments);
 				}
@@ -42,9 +44,10 @@
 		});
 
 		// override for debug
-		this.getFromPoint = function() {
+		var __getFromPoint = getFromPoint;
+		getFromPoint = function() {
 			var start = $.now();
-			var res = Audio.prototype.getFromPoint.apply(this, arguments);
+			var res = __getFromPoint.apply(this, arguments);
 			$('#stl_text').css('opacity', '1')
 			              .html('Speed ' + ($.now() - start) + ' ms');
 			return res;
