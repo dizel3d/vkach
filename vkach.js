@@ -15,7 +15,9 @@
 })
 
 (function() {
-	var Audio = function(/*selectors in which areas audio elements are searched*/) {
+	/* Parameters of constructor is a sequence of selectors
+	in which areas audio elements are searched. */
+	var Audio = function() {
 		var self = this;
 		var searchAreas = arguments;
 		this.clickListeners = [];
@@ -78,7 +80,7 @@
 			// target elements
 			elements = $(selector).find('.audio');
 
-			// find element by position
+			// find element on mouse cursor position by dichotomy method
 			var b = 0, e = elements.size();
 			while (b != e) {
 				var i = parseInt((b + e) / 2);
