@@ -15,6 +15,25 @@
 })
 
 (function() {
+	/* Returns point (x,y) position relative to the first element
+	in the set of matched elements:
+	-2 - left, -1 - above, 0 - inside, 1 - below, 2 - right,
+	null in otherwise (e.g if the set of matched elements is empty). */
+	jQuery.fn.getRelativePosition = function(x, y) {
+		var offset = this.offset();
+		if (!offset)
+			return null;
+		if (y < offset.top)
+			return -1;
+		if (y > offset.top + this.outerHeight())
+			return 1;
+		if (x < offset.left)
+			return -2;
+		if (x > offset.left + this.outerWidth())
+			return 2;
+		return 0;
+	}
+
 	/* Parameters of constructor is a sequence of selectors
 	in which areas audio elements are searched. */
 	var Audio = function() {
@@ -83,16 +102,7 @@
 					return -1;
 				}
 
-				var offset = $(elem).offset();
-				if (y < offset.top)
-					return -1;
-				else if (y > offset.top + $(elem).outerHeight())
-					return 1;
-				else if (x < offset.left)
-					return -2;
-				else if (x > offset.left + $(elem).outerWidth())
-					return 2;
-				return 0;
+				return $(elem).getRelativePosition(x, y);
 			}
 
 			// target elements
@@ -123,20 +133,7 @@
 		'#page_body'
 	)).click(function(e) {
 		// ignore clicks on elements except '.duration' element
-		if ((function() {
-			var area = $(this).find('.duration');
-			if (!area.size()) {
-				return true;
-			}
-			var offset = area.offset();
-			if (e.pageY < offset.top ||
-				e.pageY > offset.top + area.outerHeight() ||
-				e.pageX < offset.left ||
-				e.pageX > offset.left + area.outerWidth()) {
-				return true;
-			}
-			return false;
-		}).apply(this, arguments)) {
+		if ($(this).find('.duration').getRelativePosition(e.pageX, e.pageY) !== 0) {
 			return;
 		}
 
