@@ -141,6 +141,25 @@
 		alert(this.id);
 	});
 
+	$(document).click(function(e) {
+		// ignore clicks on elements except panel container element
+		var container = $('#header');
+		if (container.getRelativePosition(e.pageX, e.pageY) !== 0) {
+			return;
+		}
+
+		// get panel (create if it isn't exist)
+		var panel = $('#vkach');
+		if (!panel.size()) {
+			container.append('<div id="vkach" style="border-top: 1px dashed #D9E0E7; padding: 8px 0px 0px; margin: 8px 0px 0px;">VKACH</div>');
+			return;
+		}
+
+		if (!panel.filter(':visible').size() || panel.getRelativePosition(e.pageX, e.pageY) === -1) {
+			panel.toggle();
+		}
+	});
+
 	audio.debug(true);
 });
 
