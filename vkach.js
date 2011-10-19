@@ -5,9 +5,10 @@
 	elem.setAttribute("type", "text/javascript");
 	document.head.appendChild(elem);
 
+	var cnt = 0;
 	var wait = function() {
 		if (!window.jQuery) {
-			return setTimeout(wait, 1);
+			return setTimeout(wait, Math.min(1000, ++cnt));
 		}
 		callback();
 	}
