@@ -43,7 +43,7 @@
 		// download through special object
 		var vkach = getVkach();
 		if (vkach) {
-			alert(src + ': ' + artist + ' - ' + title);
+			vkach.download(src, artist + ' - ' + title);
 		}
 	};
 
