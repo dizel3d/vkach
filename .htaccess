@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteCond %{QUERY_STRING} (^|&)src=(.*)(&|$)
+RewriteRule ^.*$ %2? [L]
+
