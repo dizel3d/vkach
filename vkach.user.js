@@ -27,10 +27,10 @@
 	}
 
 	// loading scripts
-	script_load((GM_getValue && GM_getValue("path") || "https://raw.github.com/dizel3d/vkach/build") + "/vkach.js");
+	script_load((window.GM_getValue && GM_getValue("path") || "https://raw.github.com/dizel3d/vkach/build") + "/vkach.js");
 
 	// GM command to apply the new configuration
-	GM_registerMenuCommand && GM_registerMenuCommand("Apply", function() {
+	window.GM_registerMenuCommand && GM_registerMenuCommand("Apply", function() {
 		// get new configuration
 		var elem = document.getElementById("post_field");
 		if (!elem) {
