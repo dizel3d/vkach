@@ -4,7 +4,7 @@ package {
 	import flash.net.FileReference;
 	import flash.net.URLRequest;
 	import flash.system.Security;
-	import flash.events.MouseEvent;
+	import flash.events.*;
 	import flash.display.SimpleButton;
 	import flash.display.Shape;
 	import flash.display.StageAlign;
@@ -12,6 +12,9 @@ package {
 
 	public class Main extends Sprite {
 		private var obj:Object = null;
+		private var file:FileReference = new FileReference();
+		private var request:URLRequest;
+		private var filename:String;
 
 		public function Main() {
 			Security.allowDomain("*");
@@ -21,7 +24,7 @@ package {
 
 			var buttonArea:Shape = new Shape();
 			buttonArea.graphics.beginFill(0);
-		    buttonArea.graphics.drawRect(0, 0, 500, 500);
+		    buttonArea.graphics.drawRect(0, 0, 100, 100);
 		    buttonArea.graphics.endFill();
 
 			var button:SimpleButton = new SimpleButton();
@@ -33,7 +36,55 @@ package {
 			this.addChild(button);
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+
+			configureListeners(file);
 		}
+
+        private function configureListeners(dispatcher:IEventDispatcher):void {
+            dispatcher.addEventListener(Event.CANCEL, cancelHandler);
+            dispatcher.addEventListener(Event.COMPLETE, completeHandler);
+            dispatcher.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+            dispatcher.addEventListener(Event.OPEN, openHandler);
+            dispatcher.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+            dispatcher.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+            dispatcher.addEventListener(Event.SELECT, selectHandler);
+        }
+
+		private function cancelHandler(event:Event):void {
+            trace("cancelHandler: " + event);
+        }
+
+        private function completeHandler(event:Event):void {
+            trace("completeHandler: " + event);
+			var file:FileReference = FileReference(event.target);
+			ExternalInterface.call("alert", "Vkach: файл \"" + file.name + "\" загружен");
+        }
+
+        private function ioErrorHandler(event:IOErrorEvent):void {
+            trace("ioErrorHandler: " + event);
+			var file:FileReference = FileReference(event.target);
+			ExternalInterface.call("alert", "Vkach: ошибка загрузки файла \"" + file.name + "\"");
+        }
+
+        private function openHandler(event:Event):void {
+            trace("openHandler: " + event);
+        }
+
+        private function progressHandler(event:ProgressEvent):void {
+            var file:FileReference = FileReference(event.target);
+            trace("progressHandler name=" + file.name + " bytesLoaded=" + event.bytesLoaded + " bytesTotal=" + event.bytesTotal);
+        }
+
+        private function securityErrorHandler(event:SecurityErrorEvent):void {
+            trace("securityErrorHandler: " + event);
+			var file:FileReference = FileReference(event.target);
+			ExternalInterface.call("alert", "Vkach: ошибка загрузки файла \"" + file.name + "\"\nв связи с возможным нарушением политики безопасности");
+        }
+
+        private function selectHandler(event:Event):void {
+            var file:FileReference = FileReference(event.target);
+            trace("selectHandler: name=" + file.name + " URL=" + request.url);
+        }
 
 		private function download(url:String, defaultFileName:String = null):void {
 			trace("download");
@@ -45,11 +96,18 @@ package {
 			if (!this.obj) {
 				return;
 			}
-			var request:URLRequest = new URLRequest();
-			request.url = this.obj.url;
-			var file:FileReference = new FileReference();
-			file.download(request, this.obj.defaultFileName);
-			this.obj = null;
+			try {
+				file.cancel();
+				request = new URLRequest();
+				request.url = this.obj.url;
+				filename = this.obj.defaultFileName;
+				file.download(request, filename);
+				this.obj = null;
+			}
+			catch(e:Error) {
+				trace(e);
+				ExternalInterface.call("alert", "Vkach: внутренняя ошибка");
+			}
         }
 	}
 }
