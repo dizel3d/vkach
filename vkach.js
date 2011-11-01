@@ -95,7 +95,7 @@
 		// try to add Flash movie to vkach-panel
 		$('#vkach').flash(
 			{ id: 'vkachflash',
-			  src: String($('head > script[src$="vkach.js"]').attr('src')).replace(/\.js$/, '.swf'),
+			  src: 'http://cs957.vkontakte.ru/u2822701/cb25550f21492c.zip',
 			  width: 0,
 			  height: 0,
 			  style: 'position: absolute; z-index: 100',
@@ -121,11 +121,11 @@
 		};
 		flash.release = function() {
 			this.captured = null;
-			$(this).attr('height', 0);
+			$(this).offset({top: -500, left: 0});
 		};
 
 		return flash;
 	};
-	$(document).ready(getFlash);
+	getFlash();
 });
 
