@@ -30,6 +30,7 @@
 (function() {
 	var toFilename = function(str) {
 		return String(str)
+			.replace(/&amp;/g, "&")
 			.replace(/(&#?\w+;|<[^>]+>)/g, "") // remove HTML entities
 			.replace(/^\s*/, "").replace(/\s*$/, "") // trim
 			.replace(/\s+/g, " ") // fix spaces
@@ -56,23 +57,24 @@
 				return;
 			}
 
-			// insert hyperlink once if Flash isn't supported
-			if (!(target.parent('a').size())) {
-				info = getAudioInfo.apply(audio);
-				audio.wrap('<a onclick="return false;" href="' + info.src + '"/>');
-			}
-
 			// capture audio
 			var flash = getFlash();
 			if (flash) {
-				flash.capture(audio.get(0), target);
+				return flash.capture(audio.get(0), target);
+			}
+
+			// insert hyperlink once if Flash isn't supported
+			if (!(target.parent('a').size())) {
+				info = getAudioInfo.apply(audio);
+				target.wrap('<a onclick="return false;" href="' + info.src + '"/>');
 			}
 		}
 	});
 
 	$(document).mousedown(function(e) {
 		if (e.which != 1 || e.target !== getFlash() || !e.target.captured) {
-			return getFlash().release();
+			var flash = getFlash();
+			return flash && flash.release();
 		}
 
 		// download captured audio
@@ -102,7 +104,9 @@
 			  allowscriptaccess: 'always',
 			  allownetworking: 'all',
 			  wmode: "transparent" },
-			{ version: 8 }
+			{ version: 8 },
+			undefined,
+			$.noop
 		);
 		var flash = $('#vkachflash').get(0);
 		if (!flash) {
