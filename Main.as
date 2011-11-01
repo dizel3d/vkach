@@ -1,3 +1,5 @@
+// Copyright (C) Valentin Sarychev <dizel3d@gmail.com>, 2011
+
 package {
 	import flash.display.Sprite;
 	import flash.external.ExternalInterface;

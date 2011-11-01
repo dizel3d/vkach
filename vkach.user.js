@@ -2,6 +2,8 @@
 // @name          vkach
 // @namespace     https://github.com/dizel3d/
 // @description   vkontakte.ru content downloader
+// @author        Valentin Sarychev <dizel3d@gmail.com>
+// @copyright     Valentin Sarychev, 2011
 // @include http://vkontakte.ru/*
 // @include http://vk.com/*
 // ==/UserScript==

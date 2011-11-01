@@ -1,3 +1,5 @@
+// Copyright (C) Valentin Sarychev <dizel3d@gmail.com>, 2011
+
 // pre-installation
 ;(function(callback) {
 	var loading;
