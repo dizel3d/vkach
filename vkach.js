@@ -29,15 +29,16 @@
 
 (function() {
 	var toFilename = function(str) {
-		return String(str).replace(/^\s*/, "").replace(/\s*$/, "") // trim
+		return String(str)
+			.replace(/(&#?\w+;|<[^>]+>)/g, "") // remove HTML entities
+			.replace(/^\s*/, "").replace(/\s*$/, "") // trim
 			.replace(/\s+/g, " ") // fix spaces
-			.replace("[\/:\?\*\"><\|]", ""); // remove forbidden characters
+			.replace(/[/\\:\*\?\"\|%]/g, ""); // remove forbidden characters
 	};
 
 	var getAudioInfo = function() {
 		var artist = $(this).find('.info > :eq(1) a:first').html();
-		var titleSpan = $(this).find('.info > :eq(1) span:first');
-		var title = titleSpan.children().html() || titleSpan.html();
+		var title = $(this).find('.info .title').html() || $(this).find('.info [id^="title"]').html();
 		var src = $(this).find('input:first').attr('value').split(',')[0];
 
 		return {
