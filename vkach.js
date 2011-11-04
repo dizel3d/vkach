@@ -66,10 +66,14 @@
 			}
 
 			// insert hyperlink once if Flash isn't supported
-			if (!(target.parent('a').size())) {
-				info = getAudioInfo.apply(audio);
-				target.wrap('<a onclick="return false;" href="' + info.src + '"/>');
+			if (!(target.find('a').size())) {
+				var info = getAudioInfo.apply(audio);
+				target.wrapInner('<a onclick="return false;" href="' + info.src + '"/>');
 			}
+		}
+	}).mouseout(function(e) {
+		if (e.target == getFlash()) {
+			return e.target.release();
 		}
 	});
 
@@ -82,7 +86,7 @@
 		// download captured audio
 		var flash = e.target;
 		if (flash.ext_download) {
-			info = getAudioInfo.apply(flash.captured);
+			var info = getAudioInfo.apply(flash.captured);
 			flash.ext_download(info.src, info.artist + ' - ' + info.title + '.mp3');
 		}
 	});
@@ -99,13 +103,13 @@
 		// try to add Flash movie to vkach-panel
 		$('#vkach').flash(
 			{ id: 'vkachflash',
-			  src: 'http://cs957.vkontakte.ru/u2822701/cb25550f21492c.zip',
+			  src: 'http://cs957.vkontakte.ru/u2822701/d8f17d63856b74.zip',
 			  width: 0,
 			  height: 0,
 			  style: 'position: absolute; z-index: 100',
 			  allowscriptaccess: 'always',
 			  allownetworking: 'all',
-			  wmode: "transparent" },
+			  wmode: "opaque" },
 			{ version: 8 },
 			undefined,
 			$.noop
