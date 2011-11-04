@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) Valentin Sarychev <dizel3d@gmail.com>, 2011 -->
+
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	creationComplete="init();">
+
+	<fx:Script>
+		<![CDATA[
+			import flash.external.ExternalInterface;
+			import flash.net.FileReference;
+			import flash.net.URLRequest;
+			import flash.events.*;
+
+			private var obj:Object = null;
+			private var file:FileReference = new FileReference();
+			private var request:URLRequest;
+			private var filename:String;
+
+			private function init():void {
+				flash.system.Security.allowDomain("*");
+				if (ExternalInterface.available) {
+					ExternalInterface.addCallback("ext_download", download);
+				}
+
+				b.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+			    file.addEventListener(Event.CANCEL, cancelHandler);
+			    file.addEventListener(Event.COMPLETE, completeHandler);
+			    file.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+			    file.addEventListener(Event.OPEN, openHandler);
+			    file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+			    file.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+			    file.addEventListener(Event.SELECT, selectHandler);
+			}
+
+			private function cancelHandler(event:Event):void {
+			    trace("cancelHandler: " + event);
+			}
+
+			private function completeHandler(event:Event):void {
+			    trace("completeHandler: " + event);
+				var file:FileReference = FileReference(event.target);
+				ExternalInterface.call("alert", "Vkach: файл \"" + file.name + "\" загружен");
+			}
+
+			private function ioErrorHandler(event:IOErrorEvent):void {
+			    trace("ioErrorHandler: " + event);
+				var file:FileReference = FileReference(event.target);
+				ExternalInterface.call("alert", "Vkach: ошибка загрузки файла \"" + file.name + "\"");
+			}
+
+			private function openHandler(event:Event):void {
+			    trace("openHandler: " + event);
+			}
+
+			private function progressHandler(event:ProgressEvent):void {
+			    var file:FileReference = FileReference(event.target);
+			    trace("progressHandler name=" + file.name + " bytesLoaded=" + event.bytesLoaded + " bytesTotal=" + event.bytesTotal);
+			}
+
+			private function securityErrorHandler(event:SecurityErrorEvent):void {
+			    trace("securityErrorHandler: " + event);
+				var file:FileReference = FileReference(event.target);
+				ExternalInterface.call("alert", "Vkach: ошибка загрузки файла \"" + file.name + "\"\nв связи с нарушением политики безопасности");
+			}
+
+			private function selectHandler(event:Event):void {
+			    var file:FileReference = FileReference(event.target);
+			    trace("selectHandler: name=" + file.name + " URL=" + request.url);
+			}
+
+			private function download(url:String, defaultFileName:String = null):void {
+				trace("download");
+				this.obj = {url: url, defaultFileName: defaultFileName};
+			}
+
+			private function mouseUpHandler(event:MouseEvent):void {
+				trace("MouseUp! (!!this.obj) = " + !!this.obj);
+				if (!this.obj) {
+					return;
+				}
+				try {
+					file.cancel();
+					request = new URLRequest();
+					request.url = this.obj.url;
+					filename = this.obj.defaultFileName;
+					file.download(request, filename);
+					this.obj = null;
+				}
+				catch(e:Error) {
+					trace(e);
+					ExternalInterface.call("alert", "Vkach: внутренняя ошибка");
+				}
+			}
+		]]>
+	</fx:Script>
+
+	<s:Button id="b" width="100%" height="100%" label="vk4" fontWeight="bold" resize="b.setStyle('fontSize', b.height * 0.35);"/>
+</s:Application>
