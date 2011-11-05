@@ -40,13 +40,13 @@
 			private function completeHandler(event:Event):void {
 			    trace("completeHandler: " + event);
 				var file:FileReference = FileReference(event.target);
-				ExternalInterface.call("alert", "Vkach: файл \"" + file.name + "\" загружен");
+				ExternalInterface.call("vkachflash_output");
 			}
 
 			private function ioErrorHandler(event:IOErrorEvent):void {
 			    trace("ioErrorHandler: " + event);
 				var file:FileReference = FileReference(event.target);
-				ExternalInterface.call("alert", "Vkach: ошибка загрузки файла \"" + file.name + "\"");
+				ExternalInterface.call("vkachflash_output", null);
 			}
 
 			private function openHandler(event:Event):void {
@@ -56,12 +56,13 @@
 			private function progressHandler(event:ProgressEvent):void {
 			    var file:FileReference = FileReference(event.target);
 			    trace("progressHandler name=" + file.name + " bytesLoaded=" + event.bytesLoaded + " bytesTotal=" + event.bytesTotal);
+				ExternalInterface.call("vkachflash_output", event.bytesLoaded * 100 / event.bytesTotal);
 			}
 
 			private function securityErrorHandler(event:SecurityErrorEvent):void {
 			    trace("securityErrorHandler: " + event);
 				var file:FileReference = FileReference(event.target);
-				ExternalInterface.call("alert", "Vkach: ошибка загрузки файла \"" + file.name + "\"\nв связи с нарушением политики безопасности");
+				ExternalInterface.call("vkachflash_output", null);
 			}
 
 			private function selectHandler(event:Event):void {
@@ -89,7 +90,7 @@
 				}
 				catch(e:Error) {
 					trace(e);
-					ExternalInterface.call("alert", "Vkach: внутренняя ошибка");
+					ExternalInterface.call("vkachflash_output", null);
 				}
 			}
 		]]>

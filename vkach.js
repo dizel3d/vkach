@@ -106,7 +106,7 @@
 		// try to add Flash movie to vkach-panel
 		$('#vkach').flash(
 			{ id: 'vkachflash',
-			  src: 'http://cs957.vkontakte.ru/u2822701/b6c034cf5b59ce.zip',
+			  src: 'http://cs957.vkontakte.ru/u2822701/f0cc9cdb53289c.zip',
 			  width: 0,
 			  height: 0,
 			  style: 'outline-style: none; position: absolute; z-index: 100',
@@ -128,6 +128,13 @@
 				return;
 			}
 			this.captured = target;
+
+			// restore old output HTML-element and capture new
+			if (this.output) {
+				$(this.output.elem).html(this.output.html);
+			}
+			this.output = {elem: region, html: $(region).html()};
+
 			$(this).offset($(region).offset());
 			$(this).attr('width', $(region).outerWidth());
 			$(this).attr('height', $(region).outerHeight());
@@ -136,6 +143,21 @@
 			this.captured = null;
 			$(this).offset({top: -500, left: 0});
 		};
+		window.vkachflash_output = function(percent) { // used in Flash movie
+			if (flash.output) {
+				if (!arguments.length) {
+					$(flash.output.elem).html('OK');
+					flash.output = undefined;
+				}
+				else if (percent === null) {
+					$(flash.output.elem).html('FAIL');
+					flash.output = undefined;
+				}
+				else {
+					$(flash.output.elem).html(parseInt(percent) + "%");
+				}
+			}
+		}
 
 		return flash;
 	};
