@@ -52,7 +52,7 @@
 	};
 
 	// overload style class .duration
-	$(document.head).append('<style>.duration {cursor: pointer;}</style>');
+	$(document.head).append('<style>.duration {cursor: default;}</style>');
 
 	$(document).mouseover(function(e) {
 		var target = $(e.target);
@@ -106,7 +106,7 @@
 		// try to add Flash movie to vkach-panel
 		$('#vkach').flash(
 			{ id: 'vkachflash',
-			  src: 'http://cs957.vkontakte.ru/u2822701/3f9d8c3ca83647.zip',
+			  src: 'http://cs957.vkontakte.ru/u2822701/b6c034cf5b59ce.zip',
 			  width: 0,
 			  height: 0,
 			  style: 'outline-style: none; position: absolute; z-index: 100',
