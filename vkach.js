@@ -51,6 +51,9 @@
 		};
 	};
 
+	// overload style class .duration
+	$(document.head).append('<style>.duration {cursor: pointer;}</style>');
+
 	$(document).mouseover(function(e) {
 		var target = $(e.target);
 		if (target.is('.duration')) {
@@ -103,10 +106,10 @@
 		// try to add Flash movie to vkach-panel
 		$('#vkach').flash(
 			{ id: 'vkachflash',
-			  src: 'http://cs957.vkontakte.ru/u2822701/d8f17d63856b74.zip',
+			  src: 'http://cs957.vkontakte.ru/u2822701/3f9d8c3ca83647.zip',
 			  width: 0,
 			  height: 0,
-			  style: 'position: absolute; z-index: 100',
+			  style: 'outline-style: none; position: absolute; z-index: 100',
 			  allowscriptaccess: 'always',
 			  allownetworking: 'all',
 			  wmode: "opaque" },

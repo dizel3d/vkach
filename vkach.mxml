@@ -95,5 +95,12 @@
 		]]>
 	</fx:Script>
 
-	<s:Button id="b" width="100%" height="100%" label="vk4" fontWeight="bold" resize="b.setStyle('fontSize', b.height * 0.35);"/>
+	<s:Button id="b"
+		minHeight="0"
+		minWidth="0"
+		width="100%"
+		height="100%"
+		useHandCursor="true"
+		chromeColor="#6D8FB6"
+		icon="@Embed('download.png')"/>
 </s:Application>
