@@ -56,7 +56,7 @@
 
 	$(document).mouseover(function(e) {
 		var target = $(e.target);
-		if (target.is('.duration')) {
+		if (target.is('.duration') && !target.attr('id')) {
 			var audio = target.closest('.audio');
 			if (!audio.size()) {
 				return;
