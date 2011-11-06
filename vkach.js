@@ -91,6 +91,13 @@
 		if (flash.ext_download) {
 			var info = getAudioInfo.apply(flash.captured);
 			flash.ext_download(info.src, info.artist + ' - ' + info.title + '.mp3');
+
+			// restore old output HTML-element and capture new
+			if (flash.output) {
+				$(flash.output.elem).html(flash.output.html);
+			}
+			var elem = $(flash.captured).find('.duration').get(0);
+			flash.output = {elem: elem, html: $(elem).html()};
 		}
 	});
 
@@ -106,7 +113,7 @@
 		// try to add Flash movie to vkach-panel
 		$('#vkach').flash(
 			{ id: 'vkachflash',
-			  src: 'http://cs957.vkontakte.ru/u2822701/f0cc9cdb53289c.zip',
+			  src: 'http://cs957.vkontakte.ru/u2822701/f880fd9962d2ae.zip',
 			  width: 0,
 			  height: 0,
 			  style: 'outline-style: none; position: absolute; z-index: 100',
@@ -129,12 +136,6 @@
 			}
 			this.captured = target;
 
-			// restore old output HTML-element and capture new
-			if (this.output) {
-				$(this.output.elem).html(this.output.html);
-			}
-			this.output = {elem: region, html: $(region).html()};
-
 			$(this).offset($(region).offset());
 			$(this).attr('width', $(region).outerWidth());
 			$(this).attr('height', $(region).outerHeight());
@@ -145,7 +146,13 @@
 		};
 		window.vkachflash_output = function(percent) { // used in Flash movie
 			if (flash.output) {
-				if (!arguments.length) {
+				if (!flash.output.enabled) {
+					if (percent === "enable") {
+						flash.output.enabled = true;
+					}
+					return;
+				}
+				if (percent === undefined) {
 					$(flash.output.elem).html('OK');
 					flash.output = undefined;
 				}

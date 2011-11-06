@@ -68,6 +68,7 @@
 			private function selectHandler(event:Event):void {
 			    var file:FileReference = FileReference(event.target);
 			    trace("selectHandler: name=" + file.name + " URL=" + request.url);
+				ExternalInterface.call("vkachflash_output", 'enable');
 			}
 
 			private function download(url:String, defaultFileName:String = null):void {
