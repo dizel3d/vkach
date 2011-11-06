@@ -74,16 +74,17 @@
 				target.wrapInner('<a onclick="return false;" href="' + info.src + '"/>');
 			}
 		}
-	}).mouseout(function(e) {
-		if (e.target == getFlash()) {
-			return e.target.release();
+		else {
+			var flash = getFlash();
+			if (flash && e.target !== flash && flash.captured) {
+				flash.release();
+			}
 		}
 	});
 
 	$(document).mousedown(function(e) {
 		if (e.which != 1 || e.target !== getFlash() || !e.target.captured) {
-			var flash = getFlash();
-			return flash && flash.release();
+			return;
 		}
 
 		// download captured audio
