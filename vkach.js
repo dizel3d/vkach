@@ -114,7 +114,7 @@
 		// try to add Flash movie to vkach-panel
 		$('#vkach').flash(
 			{ id: 'vkachflash',
-			  src: 'http://cs957.vkontakte.ru/u2822701/f880fd9962d2ae.zip',
+			  src: 'http://cs957.vkontakte.ru/u2822701/e04129806922cf.zip',
 			  width: 0,
 			  height: 0,
 			  style: 'outline-style: none; position: absolute; z-index: 100',
