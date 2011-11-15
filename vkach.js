@@ -2,18 +2,16 @@
 
 // pre-installation
 ;(function(callback) {
-	var loading;
+	var loading = {src: undefined, timeout: 0};
 	var load = function(src) {
-		if (loading !== src) {
-			loading = src;
+		if (loading.src !== src) {
+			loading = {src: src, timeout: 0};
 			var elem = document.createElement("script");
 			elem.setAttribute("src", src);
 			elem.setAttribute("type", "text/javascript");
 			document.head.appendChild(elem);
 		}
 	}
-
-	var cnt = 0;
 	var wait = function() {
 		if (!window.jQuery) {
 			load("http://code.jquery.com/jquery-latest.min.js");
@@ -24,7 +22,7 @@
 		else {
 			return callback();
 		}
-		return setTimeout(wait, Math.min(1000, ++cnt));
+		return setTimeout(wait, Math.min(1000, ++loading.timeout));
 	}
 	wait();
 })
