@@ -152,7 +152,7 @@
 					return;
 				}
 				if (percent === undefined) {
-					$(flash.output.elem).html('OK');
+					$(flash.output.elem).html('&nbsp;&nbsp;OK');
 					flash.output = undefined;
 				}
 				else if (percent === null) {
@@ -160,7 +160,8 @@
 					flash.output = undefined;
 				}
 				else {
-					$(flash.output.elem).html(parseInt(percent) + "%");
+					var s = parseInt(percent) + '%';
+					$(flash.output.elem).html((new Array(Math.max(1, 5 - s.length))).join('&nbsp;') + s);
 				}
 			}
 		}
