@@ -19,6 +19,11 @@
 	 * @param src script source
 	 */
 	var script_load = function(src) {
+		// solve document.head problem
+		if (document.head === undefined) {
+			document.head = document.getElementsByTagName('head')[0];
+		}
+
 		if (!window.document || !document.head) {
 			return setTimeout(function(){script_load(src)}, 1);
 		}
