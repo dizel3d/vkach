@@ -49,6 +49,37 @@
 		};
 	};
 
+	// apply dragout files feature if the browser is Google Chrome
+	if (/chrome/.test(navigator.userAgent.toLowerCase()))
+	{
+		// info message
+		$('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
+			+ 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
+			+ 'Интерфейс vk4 изменен для пользователей Google Chrome. '
+			+ 'Теперь закачивать музыку можно перетаскиванием треков со страницы.<br/>'
+			+ 'Подробности на <a style="color: rgb(255, 255, 255)"'
+			+ 'href="http://userscripts.org/scripts/show/117252">userscripts.org</a>.<br/>'
+			+ '<a style="color: rgb(255, 255, 255)"'
+			+ 'onclick="$(this).parent().hide(\'slow\');return false">Скрыть уведомление</a>.</div>');
+
+		$(document).delegate('.audio', 'mouseover', function() {
+			if ($(this).attr('draggable')) {
+				return;
+			}
+			$(this).css('background-color', '#ffffff');
+			$(this).attr('draggable', 'true');
+			$(this).bind('dragstart', function() {
+				var info = getAudioInfo.apply(this);
+				event.dataTransfer.setData('DownloadURL', 'audio/mpeg:'
+					+ info.artist + ' - ' + info.title + '.mp3:' + info.src);
+			});
+			$(this).bind('dragend', function() {
+				$(this).css('background-color', '#f7f7f7');
+			});
+		});
+		return;
+	}
+
 	// overload style class .duration
 	$(document.head).append('<style>.duration {cursor: default;}</style>');
 
