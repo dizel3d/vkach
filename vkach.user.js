@@ -34,7 +34,7 @@
 	}
 
 	// loading scripts
-	script_load((typeof(GM_getValue) !== 'undefined' && GM_getValue("path") || "https://raw.github.com/dizel3d/vkach/build") + "/vkach.js");
+	script_load((typeof(GM_getValue) !== 'undefined' && GM_getValue("path") || "https://raw.github.com/dizel3d/vkach/master") + "/vkach.js");
 
 	// GM script commands
 	if (typeof(GM_registerMenuCommand) !== 'undefined') {

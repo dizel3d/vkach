@@ -50,8 +50,8 @@
 	};
 
 	// apply dragout files feature if the browser is Google Chrome
-	if (/chrome/.test(navigator.userAgent.toLowerCase()))
-	{
+	//if (/chrome/.test(navigator.userAgent.toLowerCase()))
+	//{
 		// info message
 		$('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
 			+ 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
@@ -78,7 +78,7 @@
 			});
 		});
 		return;
-	}
+	//}
 
 	// overload style class .duration
 	$(document.head).append('<style>.duration {cursor: default;}</style>');
