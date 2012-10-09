@@ -38,7 +38,7 @@
 	};
 
 	var getAudioInfo = function() {
-		var artist = $(this).find('.info > :eq(1) a:first').html();
+		var artist = $(this).find('.info b:eq(0) a:first').html();
 		var title = $(this).find('.info .title').html() || $(this).find('.info [id^="title"]').html();
 		var src = $(this).find('input:first').attr('value').split(',')[0];
 
@@ -55,8 +55,7 @@
 		// info message
 		$('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
 			+ 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
-			+ 'Интерфейс vk4 изменен для пользователей Google Chrome. '
-			+ 'Теперь закачивать музыку можно перетаскиванием треков со страницы.<br/>'
+			+ 'Ошибка &quot;исполнитель undefined&quot; исправлена.<br/>'
 			+ 'Подробности на <a style="color: rgb(255, 255, 255)"'
 			+ 'href="http://userscripts.org/scripts/show/117252">userscripts.org</a>.<br/>'
 			+ '<a style="color: rgb(255, 255, 255)"'
