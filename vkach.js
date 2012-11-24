@@ -82,27 +82,86 @@
 	// overload style class .duration
 	$(document.head).append('<style>.duration {cursor: default;}</style>');
 
+	var captured_audio = undefined;
+	var capture_audio = function(audio)
+	{
+		// capture new audio
+		if (captured_audio === audio)
+		{
+			return;
+		}
+		release_audio();
+		captured_audio = audio;
+
+		var button_width = 25;
+		var button_height = 15;
+		var button_padding = ($(captured_audio).height() - button_height) / 2;
+		var title_wrap = $(captured_audio).find('.info .title_wrap');
+		title_wrap.css('width', title_wrap.width() - button_width);
+		return $('<div style="width: 100%; height: 100%;">')
+			.click(function() { return false; })
+			.mousedown(function(e) {
+				if (e.which != 1 || e.target !== getFlash() || !e.target.captured) {
+					return false;
+				}
+
+				// download captured audio
+				var flash = e.target;
+				if (flash.ext_download) {
+					var info = getAudioInfo.apply(flash.captured);
+					console.log(info.src)
+					flash.ext_download(info.src, info.artist + ' - ' + info.title + '.mp3');
+
+					// restore old output HTML-element and capture new
+					if (flash.output) {
+						$(flash.output.elem).html(flash.output.html);
+					}
+					var elem = $(flash.captured).find('.duration').get(0);
+					flash.output = {elem: elem, html: $(elem).html()};
+				}
+				return false;
+			})
+			.appendTo($('<div>')
+				.attr('id', 'vkach_download_button')
+				.css('width', button_width)
+				.css('height', button_height)
+				.css('float', 'left')
+				.css('padding-top', button_padding)
+				.css('padding-bottom', button_padding)
+				.insertAfter(title_wrap));
+	}
+	var release_audio = function()
+	{
+		if (captured_audio)
+		{
+			var title_wrap = $(captured_audio).find('.info .title_wrap');
+			title_wrap.css('width', '');
+			$('#vkach_download_button').remove();
+			captured_audio = undefined;
+		}
+	}
+
 	$(document).mouseover(function(e) {
 		var target = $(e.target);
-		if (target.is('.duration') && !target.attr('id')) {
-			var audio = target.closest('.audio');
-			if (!audio.size()) {
-				return;
-			}
+		var audio = target.closest('.audio');
+		if (audio.size()) {
+			var region = capture_audio(audio.get(0));
 
 			// capture audio
 			var flash = getFlash();
 			if (flash) {
-				return flash.capture(audio.get(0), target);
+				return flash.capture(audio.get(0), region);
 			}
 
 			// insert hyperlink once if Flash isn't supported
-			if (!(target.find('a').size())) {
+			if (!(region.find('a').size())) {
 				var info = getAudioInfo.apply(audio);
-				target.wrapInner('<a onclick="return false;" href="' + info.src + '"/>');
+				region.wrapInner('<a onclick="return false;" href="' + info.src + '"/>');
 			}
 		}
 		else {
+			release_audio();
+
 			var flash = getFlash();
 			if (flash && e.target !== flash && flash.captured) {
 				flash.release();
@@ -110,37 +169,23 @@
 		}
 	});
 
-	$(document).mousedown(function(e) {
-		if (e.which != 1 || e.target !== getFlash() || !e.target.captured) {
+	var _flashMovie = true;
+	var getFlash = function() {
+		// return Flash movie if it was created
+		if (_flashMovie !== true) {
+			return _flashMovie;
+		}
+
+		// disable flash for Google Chrome users
+		if (/chrome/.test(navigator.userAgent.toLowerCase()))
+		{
+			_flashMovie = undefined;
 			return;
 		}
 
-		// download captured audio
-		var flash = e.target;
-		if (flash.ext_download) {
-			var info = getAudioInfo.apply(flash.captured);
-			flash.ext_download(info.src, info.artist + ' - ' + info.title + '.mp3');
-
-			// restore old output HTML-element and capture new
-			if (flash.output) {
-				$(flash.output.elem).html(flash.output.html);
-			}
-			var elem = $(flash.captured).find('.duration').get(0);
-			flash.output = {elem: elem, html: $(elem).html()};
-		}
-	});
-
-	var getFlash = function() {
-		// return Flash movie if vkach-panel exists
-		if (($('#vkach').get(0))) {
-			return $('#vkachflash').get(0);
-		}
-
-		// add vkach-panel
-		$(document.body).prepend('<div id="vkach" style="position: absolute;"></div>');
-
 		// try to add Flash movie to vkach-panel
-		$('#vkach').flash(
+		var panel = $('<div style="width: 100%; height: 100%;">')
+		.flash(
 			{ id: 'vkachflash',
 			  src: 'http://cs957.vkontakte.ru/u2822701/e04129806922cf.zip',
 			  width: 0,
@@ -153,10 +198,15 @@
 			undefined,
 			$.noop
 		);
-		var flash = $('#vkachflash').get(0);
+		var flash = panel.find('#vkachflash').get(0);
+		_flashMovie = flash;
 		if (!flash) {
 			return;
 		}
+
+		// default flash movie place
+		var nobody = $('<div>').css('position', 'absolute').css('top', -500).appendTo(document.body);
+		$(panel).appendTo(nobody);
 
 		// add additional functional to the Flash movie
 		flash.capture = function(target, region) {
@@ -165,13 +215,13 @@
 			}
 			this.captured = target;
 
-			$(this).offset($(region).offset());
 			$(this).attr('width', $(region).outerWidth());
 			$(this).attr('height', $(region).outerHeight());
+			$(panel).appendTo(region);
 		};
 		flash.release = function() {
 			this.captured = null;
-			$(this).offset({top: -500, left: 0});
+			$(panel).appendTo(nobody);
 		};
 		window.vkachflash_output = function(percent) { // used in Flash movie
 			if (flash.output) {
