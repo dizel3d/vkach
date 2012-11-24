@@ -49,31 +49,56 @@
 		};
 	};
 
+	// info message
+	$('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
+		+ 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
+		+ 'Работоспособность плагина vk4 восстановлена. Скачивание в Google Chrome происходит путем перетаскивания кнопки воспроизведения аудиозаписи.<br/>'
+		+ 'Подробности на <a style="color: rgb(255, 255, 255)"'
+		+ 'href="http://userscripts.org/scripts/show/117252">userscripts.org</a>.<br/>'
+		+ '<a style="color: rgb(255, 255, 255)"'
+		+ 'onclick="$(this).parent().hide(\'slow\');return false">Скрыть уведомление</a>.</div>');
+
 	// apply dragout files feature if the browser is Google Chrome
 	if (/chrome/.test(navigator.userAgent.toLowerCase()))
 	{
-		// info message
-		$('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
-			+ 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
-			+ 'Ошибка &quot;исполнитель undefined&quot; исправлена.<br/>'
-			+ 'Подробности на <a style="color: rgb(255, 255, 255)"'
-			+ 'href="http://userscripts.org/scripts/show/117252">userscripts.org</a>.<br/>'
-			+ '<a style="color: rgb(255, 255, 255)"'
-			+ 'onclick="$(this).parent().hide(\'slow\');return false">Скрыть уведомление</a>.</div>');
-
-		$(document).delegate('.audio', 'mouseover', function() {
+		$(document).delegate('.play_new', 'mouseover', function() {
 			if ($(this).attr('draggable')) {
 				return;
 			}
-			$(this).css('background-color', '#ffffff');
 			$(this).attr('draggable', 'true');
+
+			var audio = $(this).closest('.audio');
+			var area = $(audio).children('.area');
+			var children = $(audio).children();
+			var clone;
+			var cloneAudio = function() {
+				clone = audio.clone();
+				clone.children().remove();
+				return clone;
+			};
+
+			console.log('1');
+			audio.replaceWith(cloneAudio().append(children));
+
+			$(this)
+			.mouseenter(function() {
+				console.log('1');
+				audio.replaceWith(cloneAudio().append(children));
+			})
+			.mouseleave(function() {
+				console.log('2');
+				clone.replaceWith(audio.append(children));
+			});
+
 			$(this).bind('dragstart', function() {
-				var info = getAudioInfo.apply(this);
+				console.log('3');
+				var info = getAudioInfo.apply($(this).closest('.audio'));
 				event.dataTransfer.setData('DownloadURL', 'audio/mpeg:'
 					+ info.artist + ' - ' + info.title + '.mp3:' + info.src);
-			});
-			$(this).bind('dragend', function() {
-				$(this).css('background-color', '#f7f7f7');
+			})
+			.bind('dragend', function() {
+				console.log('4');
+				area.css('background-color', '#f7f7f7');
 			});
 		});
 		return;
