@@ -33,11 +33,16 @@
 		document.head.appendChild(elem);
 	}
 
+    // user information
+    var developers = ['id2822701'];
+    var currentUser = document.getElementById('myprofile').href.match('[^/]*$')[0];
+    var isDeveloper = developers.indexOf(currentUser) >= 0;
+
 	// loading scripts
-	script_load((typeof(GM_getValue) !== 'undefined' && GM_getValue("path") || "https://raw.github.com/dizel3d/vkach/build") + "/vkach.js");
+	script_load((typeof(GM_getValue) !== 'undefined' && isDeveloper && GM_getValue("path") || "https://raw.github.com/dizel3d/vkach/build") + "/vkach.js");
 
 	// GM script commands
-	if (typeof(GM_registerMenuCommand) !== 'undefined') {
+	if (isDeveloper && typeof(GM_registerMenuCommand) !== 'undefined') {
 		GM_registerMenuCommand("Dev mode", function() {
 			// get new configuration
 			var elem = document.getElementById("post_field");
