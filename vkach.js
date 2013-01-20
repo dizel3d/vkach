@@ -14,7 +14,7 @@
 	}
 	var wait = function() {
 		if (!window.jQuery) {
-			load("http://code.jquery.com/jquery-latest.min.js");
+			load("http://code.jquery.com/jquery-1.8.3.min.js");
 		}
 		else if (!jQuery.fn.flash) {
 			load("http://jquery.lukelutman.com/plugins/flash/jquery.flash.js");
