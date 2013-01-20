@@ -50,13 +50,15 @@
 	};
 
 	// info message
-	$('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
-		+ 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
-		+ 'Работоспособность плагина vk4 восстановлена. Скачивание в Google Chrome происходит путем перетаскивания кнопки воспроизведения аудиозаписи.<br/>'
-		+ 'Подробности на <a style="color: rgb(255, 255, 255)"'
-		+ 'href="http://userscripts.org/scripts/show/117252">userscripts.org</a>.<br/>'
-		+ '<a style="color: rgb(255, 255, 255)"'
-		+ 'onclick="$(this).parent().hide(\'slow\');return false">Скрыть уведомление</a>.</div>');
+    if (!$('#vk4_1_2').size()) {
+        $('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
+            + 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
+            + 'Плагин vk4 требует ручного обновления.<br/>'
+            + 'Подробности на <a style="color: rgb(255, 255, 255)"'
+            + 'href="http://userscripts.org/scripts/show/117252">userscripts.org</a>.<br/>'
+            + '<a style="color: rgb(255, 255, 255)"'
+            + 'onclick="$(this).parent().hide(\'slow\');return false">Скрыть уведомление</a>.</div>');
+    }
 
 	// apply dragout files feature if the browser is Google Chrome
 	if (/chrome/.test(navigator.userAgent.toLowerCase()))

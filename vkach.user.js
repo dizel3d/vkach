@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name          vkach
 // @namespace     https://github.com/dizel3d/
-// @description   vkontakte.ru content downloader
+// @description   vk.com content downloader
 // @author        Valentin Sarychev <dizel3d@gmail.com>
-// @copyright     Valentin Sarychev, 2011
+// @copyright     Valentin Sarychev, 2011, 2012
 // @include http://vkontakte.ru/*
 // @include http://vk.com/*
 // ==/UserScript==
@@ -33,13 +33,19 @@
 		document.head.appendChild(elem);
 	}
 
+    // specify plugin version
+    var version = document.createElement("div");
+    version.setAttribute("id", "vk4_1_2");
+    document.head.appendChild(version);
+
     // user information
     var developers = ['id2822701'];
     var currentUser = document.getElementById('myprofile').href.match('[^/]*$')[0];
     var isDeveloper = developers.indexOf(currentUser) >= 0;
 
 	// loading scripts
-	script_load((typeof(GM_getValue) !== 'undefined' && isDeveloper && GM_getValue("path") || "https://raw.github.com/dizel3d/vkach/build") + "/vkach.js");
+	script_load((typeof(GM_getValue) !== 'undefined' && isDeveloper && GM_getValue("path") ||
+                                                    "https://raw.github.com/dizel3d/vkach/build") + "/vkach.js");
 
 	// GM script commands
 	if (isDeveloper && typeof(GM_registerMenuCommand) !== 'undefined') {
