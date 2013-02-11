@@ -6,6 +6,8 @@
 // @copyright     Valentin Sarychev, 2011, 2012
 // @include http://vkontakte.ru/*
 // @include http://vk.com/*
+// @include https://vkontakte.ru/*
+// @include https://vk.com/*
 // ==/UserScript==
 
 ;(function() {
@@ -35,7 +37,7 @@
 
     // specify plugin version
     var version = document.createElement("div");
-    version.setAttribute("id", "vk4_1_2");
+    version.setAttribute("id", "vk4_1_3");
     document.head.appendChild(version);
 
     // user information
