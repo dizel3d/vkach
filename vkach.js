@@ -50,7 +50,7 @@
 	};
 
 	// info message
-    if (!$('#vk4_1_2').size()) {
+    if (!$('#vk4_1_3').size()) {
         $('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
             + 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
             + 'Плагин vk4 требует ручного обновления.<br/>'
