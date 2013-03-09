@@ -214,7 +214,8 @@
 		var panel = $('<div style="width: 100%; height: 100%;">')
 		.flash(
 			{ id: 'vkachflash',
-			  src: 'http://cs957.vkontakte.ru/u2822701/e04129806922cf.zip',
+			  src: location.href.match('^http:') ? 'http://cs957.vkontakte.ru/u2822701/e04129806922cf.zip'
+			                                     : 'https://pp.vk.me/c957/u2822701/e04129806922cf.zip',
 			  width: 0,
 			  height: 0,
 			  style: 'outline-style: none; position: absolute; z-index: 100',
