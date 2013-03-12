@@ -37,12 +37,12 @@
 
     // specify plugin version
     var version = document.createElement("div");
-    version.setAttribute("id", "vk4_1_3");
+    version.setAttribute("id", "vk4_1_4");
     document.head.appendChild(version);
 
     // user information
     var developers = ['id2822701'];
-    var currentUser = document.getElementById('myprofile').href.match('[^/]*$')[0];
+    var currentUser = [];//document.getElementById('myprofile').href.match('[^/]*$')[0];
     var isDeveloper = developers.indexOf(currentUser) >= 0;
 
 	// loading scripts

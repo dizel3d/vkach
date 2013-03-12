@@ -14,10 +14,10 @@
 	}
 	var wait = function() {
 		if (!window.jQuery) {
-			load("http://code.jquery.com/jquery-1.8.3.min.js");
+			load("https://raw.github.com/dizel3d/vkach/build/jquery-1.8.3.min.js");
 		}
 		else if (!jQuery.fn.flash) {
-			load("http://jquery.lukelutman.com/plugins/flash/jquery.flash.js");
+			load("https://raw.github.com/dizel3d/vkach/build/jquery.flash.js");
 		}
 		else {
 			return callback();
@@ -50,7 +50,7 @@
 	};
 
 	// info message
-    if (!$('#vk4_1_3').size()) {
+    if (!$('#vk4_1_4').size()) {
         $('#left_blocks').before('<div style="background-color: rgb(62, 93, 129); margin: 0px 8px 10px 0px;'
             + 'color: rgb(255, 255, 255); padding: 5px; text-align: center;">'
             + 'Плагин vk4 требует ручного обновления.<br/>'
